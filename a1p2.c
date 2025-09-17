@@ -15,13 +15,14 @@ int main(int argc, char *argv[]){
         N=(upper-lower)+1;
         
     }
-    double c = ((upper-lower)+1)/N;
+    int rem = (((upper-lower)+1)%N)-1;
+    int add = ((int)(((upper-lower)+1)/N))*N;
     int y = lower;
     int i;
     pid_t pid;
     for (i = 0; i < N; i++)
     {
-        
+        pid_t pid;
         pid = fork();
         if (pid < 0) {
             printf("Fork Failed");
@@ -31,13 +32,28 @@ int main(int argc, char *argv[]){
             break;
         }
         else {
-            y+=(((int)(c*(i+1)-((int)(c*i)))));
+            y+=add;
+            if (rem-i>0 || i==N-1)
+            {
+                y++;
+            }
+            
 
         }
     }
 
     if (pid==0)
     {
+        if (rem-i>0 || i==N-1)
+            {
+                add++;
+            }
+        
+        for (int p = y; i < (y+add); i++)
+        {
+            is_prime(p);
+        }
+        
         
     }
     
