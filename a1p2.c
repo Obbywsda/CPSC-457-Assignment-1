@@ -21,11 +21,7 @@ int main(int argc, char *argv[]){
     }
     int rem = (tot%N);
     int add = ((tot-rem)/N);
-    if(pid == 0 && i!=0){
-        exit(0);
-    }
     int y = lower;
-    
     int id = shmget(IPC_PRIVATE, tot*sizeof(int),IPC_CREAT|0666);
     int *foundPrimes = (int *)shmat(id,NULL,0);
     memset(foundPrimes,-1,tot*sizeof(int));
@@ -34,7 +30,6 @@ int main(int argc, char *argv[]){
         if (rem-i>1||(rem!=0&&N-i==1)){
             top++;
         }
-        
         pid = fork();
         if (pid < 0) {
             printf("Fork Failed");
@@ -49,34 +44,23 @@ int main(int argc, char *argv[]){
             exit(0);
         }
         else {
-            
             printf("Child PID checking %d checking range [%d, %d]\n",pid,y,((y+top)-1));
             y+=top;  
         }
     }
-    
     printf("\nParent: All children finished. Primes found:\n");
-    
     int isWaiting =0;
-    while (isWaiting!=-1)
-    {
+    while (isWaiting!=-1){
         isWaiting=wait(NULL);
     }
-
-    for (int u = 0; u < tot; u++)
-    {
+    for (int u = 0; u < tot; u++){
         
-        if (foundPrimes[u]>0)
-        {
+        if (foundPrimes[u]>0){
             printf("%d",foundPrimes[u]);
-            if (u!=tot-1)
-            {
+            if (u!=tot-1){
                 printf(" ");
-            }
-            
+            }   
         }
-        
-        
     }
     printf("\n");
     shmctl (id, IPC_RMID,NULL);
